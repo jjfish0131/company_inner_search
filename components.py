@@ -147,12 +147,13 @@ def display_search_llm_response(llm_response):
         icon = utils.get_source_icon(main_file_path)
         # ページ番号が取得できた場合のみ、ページ番号を表示（ドキュメントによっては取得できない場合がある）
         if "page" in llm_response["context"][0].metadata:
-            # ページ番号を取得
             main_page_number = llm_response["context"][0].metadata["page"]
-            # 「メインドキュメントのファイルパス」と「ページ番号」を表示
-            st.success(f"{main_file_path}", icon=icon)
+            # PDFの場合のみページ番号を表示
+            if main_file_path.lower().endswith(".pdf"):
+                st.success(f"{main_file_path}（{main_page_number}ページ）", icon=icon)
+            else:
+                st.success(f"{main_file_path}", icon=icon)
         else:
-            # 「メインドキュメントのファイルパス」を表示
             st.success(f"{main_file_path}", icon=icon)
 
         # ==========================================
@@ -182,12 +183,13 @@ def display_search_llm_response(llm_response):
             
             # ページ番号が取得できない場合のための分岐処理
             if "page" in document.metadata:
-                # ページ番号を取得
                 sub_page_number = document.metadata["page"]
-                # 「サブドキュメントのファイルパス」と「ページ番号」の辞書を作成
-                sub_choice = {"source": sub_file_path, "page_number": sub_page_number}
+                # PDFの場合のみページ番号を表示
+                if sub_file_path.lower().endswith(".pdf"):
+                    sub_choice = {"source": f"{sub_file_path}（{sub_page_number}ページ）"}
+                else:
+                    sub_choice = {"source": sub_file_path}
             else:
-                # 「サブドキュメントのファイルパス」の辞書を作成
                 sub_choice = {"source": sub_file_path}
             
             # 後ほど一覧表示するため、サブドキュメントに関する情報を順次リストに追加
@@ -283,12 +285,13 @@ def display_contact_llm_response(llm_response):
 
             # ページ番号が取得できた場合のみ、ページ番号を表示（ドキュメントによっては取得できない場合がある）
             if "page" in document.metadata:
-                # ページ番号を取得
                 page_number = document.metadata["page"]
-                # 「ファイルパス」と「ページ番号」
-                file_info = f"{file_path}"
+                # PDFの場合のみページ番号を表示
+                if file_path.lower().endswith(".pdf"):
+                    file_info = f"{file_path}（{page_number}ページ）"
+                else:
+                    file_info = f"{file_path}"
             else:
-                # 「ファイルパス」のみ
                 file_info = f"{file_path}"
 
             # 参照元のありかに応じて、適したアイコンを取得
