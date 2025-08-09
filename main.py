@@ -1,33 +1,22 @@
-"""
-このファイルは、Webアプリのメイン処理が記述されたファイルです。
-"""
-
 ############################################################
 # 1. ライブラリの読み込み
 ############################################################
-# 「.env」ファイルから環境変数を読み込むための関数
-from dotenv import load_dotenv
-# ログ出力を行うためのモジュール
-import logging
-# streamlitアプリの表示を担当するモジュール
 import streamlit as st
-# （自作）画面表示以外の様々な関数が定義されているモジュール
+from dotenv import load_dotenv
+import logging
 import utils
-# （自作）アプリ起動時に実行される初期化処理が記述された関数
 from initialize import initialize
-# （自作）画面表示系の関数が定義されているモジュール
 import components as cn
-# （自作）変数（定数）がまとめて定義・管理されているモジュール
 import constants as ct
 
+
+st.set_page_config(
+    page_title="社内情報特化型生成AI検索アプリ"
+)
 
 ############################################################
 # 2. 設定関連
 ############################################################
-# ブラウザタブの表示文言を設定
-st.set_page_config(
-    page_title=ct.APP_NAME
-)
 
 # ログ出力を行うためのロガーの設定
 logger = logging.getLogger(ct.LOGGER_NAME)
@@ -59,8 +48,23 @@ if not "initialized" in st.session_state:
 # タイトル表示
 cn.display_app_title()
 
-# モード表示
-cn.display_select_mode()
+
+# 左メニュー（サイドバー）に「利用目的」ラジオボタンを表示
+
+with st.sidebar:
+    st.markdown("### 利用目的の選択")
+    st.session_state.mode = st.radio(
+        label="利用目的",
+        options=[ct.ANSWER_MODE_1, ct.ANSWER_MODE_2],
+        index=0
+    )
+    st.divider()
+    st.markdown("**【「社内文書検索」を選択した場合】**")
+    st.info("入力内容と関連性が高い社内文書のありかを検索できます。")
+    st.code("【入力例】\n社員の育成方針に関するMTGの議事録", wrap_lines=True, language=None)
+    st.markdown("**【「社内問い合わせ」を選択した場合】**")
+    st.info("質問・要望に対して、社内文書の情報をもとに回答を得られます。")
+    st.code("【入力例】\n人事部に所属している従業員情報を一覧化して", wrap_lines=True, language=None)
 
 # AIメッセージの初期表示
 cn.display_initial_ai_message()
