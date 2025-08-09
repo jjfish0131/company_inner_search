@@ -12,6 +12,12 @@ CHUNK_OVERLAP = 50
 # ライブラリの読み込み
 ############################################################
 from langchain_community.document_loaders import PyMuPDFLoader, Docx2txtLoader, TextLoader
+
+def robust_text_loader(path):
+    try:
+        return TextLoader(path, encoding="utf-8")
+    except Exception:
+        return TextLoader(path, encoding="cp932")
 from langchain_community.document_loaders.csv_loader import CSVLoader
 
 
@@ -56,7 +62,8 @@ RAG_TOP_FOLDER_PATH = "./data"
 SUPPORTED_EXTENSIONS = {
     ".pdf": PyMuPDFLoader,
     ".docx": Docx2txtLoader,
-    ".csv": lambda path: CSVLoader(path, encoding="utf-8")
+    ".csv": lambda path: CSVLoader(path, encoding="utf-8"),
+    ".txt": robust_text_loader
 }
 WEB_URL_LOAD_TARGETS = [
     "https://generative-ai.web-camp.io/"
